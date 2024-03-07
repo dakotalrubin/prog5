@@ -2,11 +2,9 @@
 // Written by Dakota Rubin (Student ID: 1595408)
 // CSE 160 (Winter 2024)
 
-import * as THREE from "https://unpkg.com/three@v0.162.0/build/three.module.js";
-import { OrbitControls }
-  from "https://unpkg.com/three@v0.162.0/examples/jsm/controls/OrbitControls.js";
-import { GLTFLoader }
-  from "https://unpkg.com/three@v0.162.0/examples/jsm/loaders/GLTFLoader.js";
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
 // ============================================================================
 // HELPER FUNCTIONS ===========================================================
