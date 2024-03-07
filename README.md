@@ -3,4 +3,4 @@
 Windmill, windmill for the land...
 
 ## Running the Project
-Click the github-pages link in the sidebar to see our project!
+Click the github-pages link in the sidebar to run the project!
