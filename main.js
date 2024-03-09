@@ -23,6 +23,8 @@ function animate() {
   // Draw the updated scene
 	renderer.render(scene, camera);
 }
+// this is not a test
+
 
 // ============================================================================
 // MAIN CODE ==================================================================
