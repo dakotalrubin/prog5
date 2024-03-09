@@ -45,6 +45,8 @@ function createSkySphere() {
   // The sky sphere is placed at (0, 0, 0) by default
   scene.add(skySphereMesh);
 }
+// this is not a test
+
 
 // ============================================================================
 // MAIN CODE ==================================================================
