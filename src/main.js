@@ -14,6 +14,31 @@ import * as HELPERS from "./helpers.js";
 // HELPER FUNCTIONS ============================================================
 // =============================================================================
 
+// This function loads the windmill island model
+function loadWindmillIsland() {
+  // Instantiate a GLTFLoader for this model
+  const windmillIslandLoader = new GLTFLoader();
+
+  // Load the model into the scene
+  windmillIslandLoader.load("./public/models/windmill_island.gltf", (gltf) => {
+    const windmillIsland = gltf.scene;
+    scene.add(windmillIsland);
+
+    // Default transformations for this model
+    windmillIsland.position.x = 0;
+    windmillIsland.position.y = 0;
+    windmillIsland.position.z = 0;
+    windmillIsland.rotation.y = -30;
+  });
+}
+
+// This function loads all GLTF models into the main scene
+// Write a new function to load each model here!
+function loadGLTFModels() {
+  // Load the windmill island model
+  loadWindmillIsland();
+}
+
 // This function redraws the main scene every time the screen refreshes
 function animate() {
   // Retrieve the next frame to show after the screen refreshes
@@ -22,9 +47,6 @@ function animate() {
   // Rotate the sky sphere mesh along the y-axis by a small amount each frame
   skySphereMesh.rotation.y += 0.0001;
 
-  // Rotate the cube along the y-axis by a small amount each frame
-  cube.rotation.y += 0.01;
-
   // Draw the updated scene
   renderer.render(scene, camera);
 }
@@ -32,7 +54,6 @@ function animate() {
 // This function plays out the main scene
 function playScene() {
   // Move the camera
-  camera.position.z = 20;
 }
 
 // =============================================================================
@@ -94,14 +115,9 @@ const skySphereMesh = new THREE.Mesh(skySphere, skySphereMaterial);
 // The sky sphere is placed at (0, 0, 0) by default
 scene.add(skySphereMesh);
 
-// LOAD A CUBE =================================================================
-// Create a cube mesh using the given vertices and material color
-const geometry = new THREE.BoxGeometry(1, 1, 1);
-const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-const cube = new THREE.Mesh(geometry, material);
-
-// The cube is placed at coordinates (0, 0, 0) by default
-scene.add(cube);
+// LOAD GLTF MODELS ============================================================
+// Load all GLTF models into the main scene
+loadGLTFModels();
 
 // LOAD THE MAIN SCENE =========================================================
 // Transition from the loading screen to the main scene after loading all assets
