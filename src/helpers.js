@@ -31,7 +31,7 @@ export function showLoadingScreen() {
   return loadingManager;
 }
 
-// This function shows the play button when the main scene is ready
+// This function shows the play button when the main scene loads
 export function showPlayButton() {
   // Enable and show the play button
   document.getElementById("playButton").disabled = false;

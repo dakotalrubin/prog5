@@ -19,8 +19,7 @@ function animate() {
   // Retrieve the next frame to show after the screen refreshes
   requestAnimationFrame(animate);
 
-  // Rotate the sky sphere mesh along the y-axis by a small amount each frame
-  skySphereMesh.rotation.y += 0.0001;
+
 
   // Rotate the cube along the y-axis by a small amount each frame
   cube.rotation.y += 0.01;
@@ -29,8 +28,34 @@ function animate() {
   renderer.render(scene, camera);
 }
 
+// This function loads and plays music
+function playAudio() {
+  // Create an AudioListener and add it to the camera
+  const listener = new THREE.AudioListener();
+  camera.add(listener);
+
+  // Create a global Audio source
+  const sound = new THREE.Audio(listener);
+
+  // Load a sound and set it as the Audio object's buffer
+  const audioLoader = new THREE.AudioLoader();
+
+  // Load an mp3 file into the scene
+  audioLoader.load("./public/audio/feelgoodinc.mp3", function(buffer) {
+    sound.setBuffer(buffer);
+    sound.setLoop(true);
+    sound.setVolume(0.4);
+    sound.play();
+  });
+}
+
 // This function plays out the main scene
 function playScene() {
+  // Play music
+  playAudio();
+
+  // Move the camera
+  camera.position.z = 20;
 }
 
 // =============================================================================
@@ -64,25 +89,7 @@ const loadingManager = HELPERS.showLoadingScreen();
 // LOADING ASSETS ==============================================================
 // =============================================================================
 
-// LOAD THE SKY SPHERE =========================================================
-// The parameters of SphereGeometry: radius, widthSegments and heightSegments
-const skySphere = new THREE.SphereGeometry(500, 32, 16);
 
-// Instantiate a texture loader and wait for sky sphere texture to load
-const skySphereTexture = await
-  new THREE.TextureLoader().loadAsync("./public/textures/skySphereTexture.jpeg");
-
-// Use the sky sphere texture for material creation 
-const skySphereMaterial = new THREE.MeshBasicMaterial({ map:skySphereTexture });
-
-// Create a mesh of the sky sphere using its geometry and material
-const skySphereMesh = new THREE.Mesh(skySphere, skySphereMaterial);
-
-// Place the texture on the inside of the sky sphere
-skySphereMesh.material.side = THREE.BackSide;
-
-// The sky sphere is placed at (0, 0, 0) by default
-scene.add(skySphereMesh);
 
 // LOAD A CUBE =================================================================
 // Create a cube mesh using the given vertices and material color
@@ -92,9 +99,6 @@ const cube = new THREE.Mesh(geometry, material);
 
 // The cube is placed at coordinates (0, 0, 0) by default
 scene.add(cube);
-
-// LOAD AUDIO ==================================================================
-
 
 // LOAD THE MAIN SCENE =========================================================
 // Transition from the loading screen to the main scene after loading all assets
