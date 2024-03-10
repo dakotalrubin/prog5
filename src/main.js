@@ -33,9 +33,8 @@ function loadWindmillIsland() {
 }
 
 // This function loads all GLTF models into the main scene
-// Write a new function to load each model here!
 function loadGLTFModels() {
-  // Load the windmill island model
+  // Call a new function to load each model here
   loadWindmillIsland();
 }
 
@@ -53,7 +52,7 @@ function animate() {
 
 // This function plays out the main scene
 function playScene() {
-  // Move the camera
+  // TODO: Use the OrbitControls module here to control the camera!
 }
 
 // =============================================================================
@@ -139,6 +138,6 @@ document.getElementById("playButton").addEventListener("click", () => {
   document.getElementById("playButton").remove();
 
   // Play out the main scene
-  music.play();
+  music.play(); // You can comment this line out to mute the audio while we test!
   playScene();
 });
