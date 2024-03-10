@@ -35,7 +35,6 @@ html, body {
   -webkit-animation: spin 2s linear infinite;
   animation: spin 2s linear infinite;
 }
-
 #loader:before {
   content: "";
   position: absolute;
@@ -49,7 +48,6 @@ html, body {
   -webkit-animation: spin 3s linear infinite;
   animation: spin 3s linear infinite;
 }
-
 #loader:after {
   content: "";
   position: absolute;
@@ -63,38 +61,46 @@ html, body {
   -webkit-animation: spin 1.5s linear infinite;
   animation: spin 1.5s linear infinite;
 }
-
 @-webkit-keyframes spin {
-  0%   {
+    0%   {
       -webkit-transform: rotate(0deg);
       -ms-transform: rotate(0deg);
       transform: rotate(0deg);
-  }
-  100% {
+    }
+    100% {
       -webkit-transform: rotate(360deg);
       -ms-transform: rotate(360deg);
       transform: rotate(360deg);
-  }
+    }
 }
-
 @keyframes spin {
-  0%   {
+    0%   {
       -webkit-transform: rotate(0deg);
       -ms-transform: rotate(0deg);
       transform: rotate(0deg);
-  }
-  100% {
+    }
+    100% {
       -webkit-transform: rotate(360deg);
       -ms-transform: rotate(360deg);
       transform: rotate(360deg);
-  }
+    }
 }
 
 #play-screen {
 	position: absolute;
   z-index: 2;
-	top: 49.2%;
-	left: 49.2%;
+	top: 43.8%;
+	left: 45.8%;
 	width: 100%;
 	height: 100%;
+}
+
+#playButton {
+  background-color: #5B18C2;
+  color: white;
+  font-size: 48px;
+  height: 92px;
+  width: 124px;
+  border: 1px solid #5B18C2;
+  border-radius: 16px;
 }

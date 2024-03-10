@@ -29,7 +29,7 @@ function animate() {
   renderer.render(scene, camera);
 }
 
-// This function plays a global audio object using the Web Audio API
+// This function loads and plays music
 function playAudio() {
   // Create an AudioListener and add it to the camera
   const listener = new THREE.AudioListener();
@@ -41,7 +41,7 @@ function playAudio() {
   // Load a sound and set it as the Audio object's buffer
   const audioLoader = new THREE.AudioLoader();
 
-  // Load a song into the scene and play
+  // Load an mp3 file into the scene
   audioLoader.load("./public/audio/feelgoodinc.mp3", function(buffer) {
     sound.setBuffer(buffer);
     sound.setLoop(true);
@@ -52,7 +52,6 @@ function playAudio() {
 
 // This function plays out the main scene involving all camera movements
 function playScene() {
-  // Play a global audio object using the Web Audio API
   playAudio();
 }
 
@@ -84,16 +83,16 @@ document.body.appendChild(renderer.domElement);
 const loadingManager = HELPERS.showLoadingScreen();
 
 // =============================================================================
-// SETUP FOR LOADING ASSETS ====================================================
+// LOADING ASSETS ==============================================================
 // =============================================================================
 
 // LOAD THE SKY SPHERE =========================================================
 // The parameters of SphereGeometry: radius, widthSegments and heightSegments
 const skySphere = new THREE.SphereGeometry(500, 32, 16);
 
-// Instantiate a texture loader and load the sky sphere texture
-const skySphereTexture =
-  new THREE.TextureLoader().load("./public/textures/skySphereTexture.jpeg");
+// Instantiate a texture loader and wait for the sky sphere texture to load
+const skySphereTexture = await
+  new THREE.TextureLoader().loadAsync("./public/textures/skySphereTexture.jpeg");
 
 // Use the sky sphere texture for material creation 
 const skySphereMaterial = new THREE.MeshBasicMaterial({ map:skySphereTexture });
@@ -117,7 +116,7 @@ const cube = new THREE.Mesh(geometry, material);
 scene.add(cube);
 
 // LOAD THE MAIN SCENE =========================================================
-// Transition from the loading screen to the main scene after loading all models
+// Transition from the loading screen to the main scene after loading all assets
 loadingManager.onLoad();
 
 // =============================================================================
@@ -127,14 +126,14 @@ loadingManager.onLoad();
 // Redraw the main scene every time the screen refreshes
 animate();
 
-// Wait for loading screen to transition after 850ms then show the play button
+// Wait for loading screen to fully transition then show play button
 setTimeout(HELPERS.showPlayButton, 850);
 
 // Add an event listener to the play button that plays the main scene
 document.getElementById("playButton").addEventListener("click", () => {
-  // Remove the play button after clicking so the main scene can begin
+  // Remove the play button after clicking
   document.getElementById("playButton").remove();
 
-  // Play out the main scene involving all camera movements
+  // Play out the main scene
   playScene();
 });
