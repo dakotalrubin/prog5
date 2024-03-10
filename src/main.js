@@ -29,30 +29,8 @@ function animate() {
   renderer.render(scene, camera);
 }
 
-// This function loads and plays music
-function playAudio() {
-  // Create an AudioListener and add it to the camera
-  const listener = new THREE.AudioListener();
-  camera.add(listener);
-
-  // Create a global Audio source
-  const sound = new THREE.Audio(listener);
-
-  // Load a sound and set it as the Audio object's buffer
-  const audioLoader = new THREE.AudioLoader();
-
-  // Load an mp3 file into the scene
-  audioLoader.load("./public/audio/feelgoodinc.mp3", function(buffer) {
-    sound.setBuffer(buffer);
-    sound.setLoop(true);
-    sound.setVolume(0.4);
-    sound.play();
-  });
-}
-
-// This function plays out the main scene involving all camera movements
+// This function plays out the main scene
 function playScene() {
-  playAudio();
 }
 
 // =============================================================================
@@ -90,7 +68,7 @@ const loadingManager = HELPERS.showLoadingScreen();
 // The parameters of SphereGeometry: radius, widthSegments and heightSegments
 const skySphere = new THREE.SphereGeometry(500, 32, 16);
 
-// Instantiate a texture loader and wait for the sky sphere texture to load
+// Instantiate a texture loader and wait for sky sphere texture to load
 const skySphereTexture = await
   new THREE.TextureLoader().loadAsync("./public/textures/skySphereTexture.jpeg");
 
@@ -115,6 +93,9 @@ const cube = new THREE.Mesh(geometry, material);
 // The cube is placed at coordinates (0, 0, 0) by default
 scene.add(cube);
 
+// LOAD AUDIO ==================================================================
+
+
 // LOAD THE MAIN SCENE =========================================================
 // Transition from the loading screen to the main scene after loading all assets
 loadingManager.onLoad();
@@ -126,8 +107,8 @@ loadingManager.onLoad();
 // Redraw the main scene every time the screen refreshes
 animate();
 
-// Wait for loading screen to fully transition then show play button
-setTimeout(HELPERS.showPlayButton, 850);
+// Wait for loading screen to transition then show play button
+setTimeout(HELPERS.showPlayButton, 900);
 
 // Add an event listener to the play button that plays the main scene
 document.getElementById("playButton").addEventListener("click", () => {
