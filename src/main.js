@@ -29,35 +29,9 @@ function animate() {
   renderer.render(scene, camera);
 }
 
-// This function loads and plays music
-function playAudio() {
-  // Create an AudioListener and add it to the camera
-  const listener = new THREE.AudioListener();
-  camera.add(listener);
-
-  // Create a global Audio source
-  const sound = new THREE.Audio(listener);
-
-  // Load a sound and set it as the Audio object's buffer
-  const audioLoader = new THREE.AudioLoader();
-
-  // Load an mp3 file into the scene
-  audioLoader.load("./public/audio/feelgoodinc.mp3", function(buffer) {
-    sound.setBuffer(buffer);
-    sound.setLoop(true);
-    sound.setVolume(0.4);
-    sound.play();
-    console.log(new Date().getMilliseconds());
-  });
-}
-
 // This function plays out the main scene
 function playScene() {
-  // Load and play music
-  playAudio();
-
   // Move the camera
-  console.log(new Date().getMilliseconds());
   camera.position.z = 20;
 }
 
@@ -92,22 +66,30 @@ const loadingManager = HELPERS.showLoadingScreen();
 // LOADING ASSETS ==============================================================
 // =============================================================================
 
+// LOAD MUSIC ==================================================================
+// Create a new HTMLAudioElement to hold music
+const music = new Audio("./public/audio/feelgoodinc.mp3");
+
+// Adjust music settings
+music.volume = 0.4;
+music.loop = true;
+
 // LOAD THE SKY SPHERE =========================================================
 // The parameters of SphereGeometry: radius, widthSegments and heightSegments
 const skySphere = new THREE.SphereGeometry(500, 32, 16);
 
 // Instantiate a texture loader and wait for sky sphere texture to load
-const skySphereTexture = await
-  new THREE.TextureLoader().loadAsync("./public/textures/skySphereTexture.jpeg");
+const skySphereTexture =
+  await new THREE.TextureLoader().loadAsync("./public/textures/skySphereTexture.jpeg");
 
 // Use the sky sphere texture for material creation 
 const skySphereMaterial = new THREE.MeshBasicMaterial({ map:skySphereTexture });
 
+// Place the texture on the inside of the sky sphere
+skySphereMaterial.side = THREE.BackSide;
+
 // Create a mesh of the sky sphere using its geometry and material
 const skySphereMesh = new THREE.Mesh(skySphere, skySphereMaterial);
-
-// Place the texture on the inside of the sky sphere
-skySphereMesh.material.side = THREE.BackSide;
 
 // The sky sphere is placed at (0, 0, 0) by default
 scene.add(skySphereMesh);
@@ -141,5 +123,6 @@ document.getElementById("playButton").addEventListener("click", () => {
   document.getElementById("playButton").remove();
 
   // Play out the main scene
+  music.play();
   playScene();
 });
