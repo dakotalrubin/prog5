@@ -7,7 +7,6 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
-import { ColladaLoader } from "three/addons/loaders/ColladaLoader.js";
 
 import * as HELPERS from "./helpers.js";
 
@@ -15,19 +14,46 @@ import * as HELPERS from "./helpers.js";
 // HELPER FUNCTIONS ============================================================
 // =============================================================================
 
-// This function redraws the scene every time the screen refreshes
+// This function redraws the main scene every time the screen refreshes
 function animate() {
   // Retrieve the next frame to show after the screen refreshes
   requestAnimationFrame(animate);
 
   // Rotate the sky sphere mesh along the y-axis by a small amount each frame
-  skySphereMesh.rotation.y += 0.00005;
+  skySphereMesh.rotation.y += 0.0001;
 
   // Rotate the cube along the y-axis by a small amount each frame
   cube.rotation.y += 0.01;
 
   // Draw the updated scene
   renderer.render(scene, camera);
+}
+
+// This function plays a global audio object using the Web Audio API
+function playAudio() {
+  // Create an AudioListener and add it to the camera
+  const listener = new THREE.AudioListener();
+  camera.add(listener);
+
+  // Create a global Audio source
+  const sound = new THREE.Audio(listener);
+
+  // Load a sound and set it as the Audio object's buffer
+  const audioLoader = new THREE.AudioLoader();
+
+  // Load a song into the scene and play
+  audioLoader.load("./public/audio/feelgoodinc.mp3", function(buffer) {
+    sound.setBuffer(buffer);
+    sound.setLoop(true);
+    sound.setVolume(0.4);
+    sound.play();
+  });
+}
+
+// This function plays out the main scene involving all camera movements
+function playScene() {
+  // Play a global audio object using the Web Audio API
+  playAudio();
 }
 
 // =============================================================================
@@ -58,16 +84,16 @@ document.body.appendChild(renderer.domElement);
 const loadingManager = HELPERS.showLoadingScreen();
 
 // =============================================================================
-// SETUP FOR LOADING MODELS ====================================================
+// SETUP FOR LOADING ASSETS ====================================================
 // =============================================================================
 
 // LOAD THE SKY SPHERE =========================================================
 // The parameters of SphereGeometry: radius, widthSegments and heightSegments
-const skySphere = new THREE.SphereGeometry(1000, 32, 16);
+const skySphere = new THREE.SphereGeometry(500, 32, 16);
 
 // Instantiate a texture loader and load the sky sphere texture
 const skySphereTexture =
-  new THREE.TextureLoader().load("./public/textures/skySphereTexture.png");
+  new THREE.TextureLoader().load("./public/textures/skySphereTexture.jpeg");
 
 // Use the sky sphere texture for material creation 
 const skySphereMaterial = new THREE.MeshBasicMaterial({ map:skySphereTexture });
@@ -98,5 +124,17 @@ loadingManager.onLoad();
 // MAIN CODE ===================================================================
 // =============================================================================
 
-// Call the main loop to redraw the scene every time the screen refreshes
+// Redraw the main scene every time the screen refreshes
 animate();
+
+// Wait for loading screen to transition after 850ms then show the play button
+setTimeout(HELPERS.showPlayButton, 850);
+
+// Add an event listener to the play button that plays the main scene
+document.getElementById("playButton").addEventListener("click", () => {
+  // Remove the play button after clicking so the main scene can begin
+  document.getElementById("playButton").remove();
+
+  // Play out the main scene involving all camera movements
+  playScene();
+});

@@ -15,18 +15,25 @@ export function onTransitionEnd(event) {
   event.target.remove();
 }
 
-// This function shows the loading screen while waiting for models to load
+// This function shows the loading screen while waiting for assets to load
 export function showLoadingScreen() {
   // Create a loading screen manager
   const loadingManager = new THREE.LoadingManager(() => {
 
-    // Fetch the loading screen HTML element
-    const loadingScreen = document.getElementById('loading-screen');
-    loadingScreen.classList.add('fade-out');
+    // Fetch the loading screen HTML section
+    const loadingScreen = document.getElementById("loading-screen");
+    loadingScreen.classList.add("fade-out");
 
     // Remove the loader from the DOM via event listener
-    loadingScreen.addEventListener('transitionend', onTransitionEnd);
+    loadingScreen.addEventListener("transitionend", onTransitionEnd);
   });
 
   return loadingManager;
+}
+
+// This function shows the play button when the main scene is ready
+export function showPlayButton() {
+  // Enable and show the play button
+  document.getElementById("playButton").disabled = false;
+  document.getElementById("playButton").style.display = "inline";
 }
