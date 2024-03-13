@@ -38,7 +38,7 @@ function loadLaughingHead() {
   const laughingHeadLoader = new GLTFLoader();
 
   // Load the model into the scene
-  laughingHeadLoader.load("./public/models/LaughingHead.gltf", (gltf) => {
+  laughingHeadLoader.load("./public/models/AnimatedLaugh.gltf", (gltf) => {
     const laughingHead = gltf.scene;
     scene.add(laughingHead);
 
