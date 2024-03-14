@@ -17,60 +17,78 @@ import * as HELPERS from "./helpers.js";
 // This function loads the windmill island model
 function loadWindmillIsland() {
   // Instantiate a GLTFLoader for this model
-  const windmillIslandLoader = new GLTFLoader();
+  const loader = new GLTFLoader();
 
   // Load the model into the scene
-  windmillIslandLoader.load("./public/models/windmill_island.gltf", (gltf) => {
-    const windmillIsland = gltf.scene;
-    scene.add(windmillIsland);
+  loader.load("./public/models/windmill_island.gltf", (gltf) => {
+    scene.add(gltf.scene);
 
     // Default transformations for this model
-    windmillIsland.position.x = 0;
-    windmillIsland.position.y = 0;
-    windmillIsland.position.z = 0;
-    windmillIsland.rotation.y = -30;
+    gltf.scene.position.x = 0;
+    gltf.scene.position.y = 0;
+    gltf.scene.position.z = 0;
+    gltf.scene.rotation.y = -30;
   });
 }
 
-// This function loads the windmill island model
+// This function loads the laughing head model
 function loadLaughingHead() {
   // Instantiate a GLTFLoader for this model
-  const laughingHeadLoader = new GLTFLoader();
+  const loader = new GLTFLoader();
 
   // Load the model into the scene
-  laughingHeadLoader.load("./public/models/AnimatedLaugh.gltf", (gltf) => {
-    const laughingHead = gltf.scene;
-    scene.add(laughingHead);
+  loader.load("./public/models/AnimatedLaugh.gltf", (gltf) => {
+    // Unique animation for the model
+    mixer = new THREE.AnimationMixer(gltf.scene);
+    laugh = mixer.clipAction(gltf.animations[0]);
+    laugh.setLoop(THREE.LoopOnce, 1);
 
-    // Default transformations for this model
-    laughingHead.position.x = 0;
-    laughingHead.position.y = 0;
-    laughingHead.position.z = 4;
+    scene.add(gltf.scene);
+
+    // Unique transformations for this model
+    gltf.scene.position.x = 0.5;
+    gltf.scene.position.y = 0;
+    gltf.scene.position.z = 4;
+    gltf.scene.rotation.y = -0.4;
   });
 }
 
 // This function loads all GLTF models into the main scene
 function loadGLTFModels() {
-  // Call a new function to load each model here
+  // Call a new function to load each model here!
   loadWindmillIsland();
   loadLaughingHead();
 }
 
 // This function redraws the main scene every time the screen refreshes
 function animate() {
-  // Retrieve the next frame to show after the screen refreshes
-  requestAnimationFrame(animate);
+  // Update time passed since last frame
+  deltaSeconds = (Date.now() - lastFrame) / 1000;
 
-  // Rotate the sky sphere mesh along the y-axis by a small amount each frame
-  skySphereMesh.rotation.y += 0.0001;
+  // Update any animations
+  if (mixer) {
+    mixer.update(deltaSeconds);
+  }
 
   // Draw the updated scene
   renderer.render(scene, camera);
+
+  // Incrementally rotate the sky sphere mesh along the y-axis
+  skySphereMesh.rotation.y += 0.0001;
+
+  // Update the time of the most recent frame
+  lastFrame = Date.now();
+
+  // Retrieve the next frame to show after the screen refreshes
+  requestAnimationFrame(animate);
 }
 
 // This function plays out the main scene
 function playScene() {
-  // TODO: Use the OrbitControls module here to control the camera!
+  // Trigger all animations here
+  laugh.play();
+
+  // TODO: Use the OrbitControls module here to control the camera
 }
 
 // =============================================================================
@@ -133,6 +151,15 @@ const skySphereMesh = new THREE.Mesh(skySphere, skySphereMaterial);
 scene.add(skySphereMesh);
 
 // LOAD GLTF MODELS ============================================================
+// Create a mixer for playing animations
+var mixer;
+
+// Create variables to track the time passed since the most recent frame
+var deltaSeconds, lastFrame;
+
+// Create variables to trigger certain animations
+var laugh;
+
 // Load all GLTF models into the main scene
 loadGLTFModels();
 
@@ -148,7 +175,7 @@ loadingManager.onLoad();
 animate();
 
 // Wait for loading screen to transition then show play button
-setTimeout(HELPERS.showPlayButton, 900);
+setTimeout(HELPERS.showPlayButton, 850);
 
 // Add an event listener to the play button that plays the main scene
 document.getElementById("playButton").addEventListener("click", () => {
