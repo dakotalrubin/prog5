@@ -91,7 +91,7 @@ const loadingManager = HELPERS.showLoadingScreen();
 const music = new Audio("./public/audio/feelgoodinc.mp3");
 
 // Adjust music settings
-music.volume = 0.4;
+music.volume = 0.6;
 music.loop = true;
 
 // LOAD THE SKY SPHERE =========================================================
