@@ -32,10 +32,28 @@ function loadWindmillIsland() {
   });
 }
 
+// This function loads the windmill island model
+function loadLaughingHead() {
+  // Instantiate a GLTFLoader for this model
+  const laughingHeadLoader = new GLTFLoader();
+
+  // Load the model into the scene
+  laughingHeadLoader.load("./public/models/AnimatedLaugh.gltf", (gltf) => {
+    const laughingHead = gltf.scene;
+    scene.add(laughingHead);
+
+    // Default transformations for this model
+    laughingHead.position.x = 0;
+    laughingHead.position.y = 0;
+    laughingHead.position.z = 4;
+  });
+}
+
 // This function loads all GLTF models into the main scene
 function loadGLTFModels() {
   // Call a new function to load each model here
   loadWindmillIsland();
+  loadLaughingHead();
 }
 
 // This function redraws the main scene every time the screen refreshes
