@@ -19,12 +19,12 @@ function loadWindmillIsland() {
   // Instantiate a GLTFLoader for this model
   const loader = new GLTFLoader();
 
-  // Load this model into the scene
+  // Load this model
   loader.load("./public/models/windmill_island.gltf", (gltf) => {
     // Add this model into the scene
     scene.add(gltf.scene);
 
-    // Default transformations for this model
+    // Unique transformations for this model
     gltf.scene.position.x = 0;
     gltf.scene.position.y = 0;
     gltf.scene.position.z = 0;
@@ -37,9 +37,9 @@ function loadLaughingHead() {
   // Instantiate a GLTFLoader for this model
   const loader = new GLTFLoader();
 
-  // Load this model into the scene
+  // Load this model
   loader.load("./public/models/AnimatedLaugh.gltf", (gltf) => {
-    // Unique animation for this model
+    // Unique animations for this model
     laughMixer = new THREE.AnimationMixer(gltf.scene);
     laugh = laughMixer.clipAction(gltf.animations[0]);
     laugh.setLoop(THREE.LoopOnce, 1);
@@ -67,7 +67,7 @@ function animate() {
   // Update time passed since last frame
   deltaSeconds = (Date.now() - lastFrame) / 1000;
 
-  // Check whether all mixers exist and update animations
+  // Make sure mixers exist then update animations every frame
   if (laughMixer) {
     laughMixer.update(deltaSeconds);
   }
@@ -87,7 +87,7 @@ function animate() {
 
 // This function plays out the main scene
 function playScene() {
-  // Trigger all animations when the main scene starts here
+  // Trigger all animations here when the main scene starts
   laugh.play();
 
   // TODO: Use the OrbitControls module here to control the camera
@@ -153,10 +153,10 @@ const skySphereMesh = new THREE.Mesh(skySphere, skySphereMaterial);
 scene.add(skySphereMesh);
 
 // LOAD GLTF MODELS ============================================================
-// Create a mixer for each model to play an animation
+// Create a mixer for each model to play animations
 var laughMixer;
 
-// Create a variable for each model to trigger an animation
+// Create a variable for each model to trigger animations
 var laugh;
 
 // Create variables to track the time passed since the most recent frame
@@ -185,6 +185,6 @@ document.getElementById("playButton").addEventListener("click", () => {
   document.getElementById("playButton").remove();
 
   // Play out the main scene
-  music.play(); // You can comment this line out to mute the audio while we test!
+  music.play();
   playScene();
 });
