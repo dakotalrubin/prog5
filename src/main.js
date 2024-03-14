@@ -19,8 +19,9 @@ function loadWindmillIsland() {
   // Instantiate a GLTFLoader for this model
   const loader = new GLTFLoader();
 
-  // Load the model into the scene
+  // Load this model into the scene
   loader.load("./public/models/windmill_island.gltf", (gltf) => {
+    // Add this model into the scene
     scene.add(gltf.scene);
 
     // Default transformations for this model
@@ -36,13 +37,14 @@ function loadLaughingHead() {
   // Instantiate a GLTFLoader for this model
   const loader = new GLTFLoader();
 
-  // Load the model into the scene
+  // Load this model into the scene
   loader.load("./public/models/AnimatedLaugh.gltf", (gltf) => {
-    // Unique animation for the model
-    mixer = new THREE.AnimationMixer(gltf.scene);
-    laugh = mixer.clipAction(gltf.animations[0]);
+    // Unique animation for this model
+    laughMixer = new THREE.AnimationMixer(gltf.scene);
+    laugh = laughMixer.clipAction(gltf.animations[0]);
     laugh.setLoop(THREE.LoopOnce, 1);
 
+    // Add this model into the scene
     scene.add(gltf.scene);
 
     // Unique transformations for this model
@@ -55,7 +57,7 @@ function loadLaughingHead() {
 
 // This function loads all GLTF models into the main scene
 function loadGLTFModels() {
-  // Call a new function to load each model here!
+  // Call a new function to load each model here
   loadWindmillIsland();
   loadLaughingHead();
 }
@@ -65,9 +67,9 @@ function animate() {
   // Update time passed since last frame
   deltaSeconds = (Date.now() - lastFrame) / 1000;
 
-  // Update any animations
-  if (mixer) {
-    mixer.update(deltaSeconds);
+  // Check whether all mixers exist and update animations
+  if (laughMixer) {
+    laughMixer.update(deltaSeconds);
   }
 
   // Draw the updated scene
@@ -85,7 +87,7 @@ function animate() {
 
 // This function plays out the main scene
 function playScene() {
-  // Trigger all animations here
+  // Trigger all animations when the main scene starts here
   laugh.play();
 
   // TODO: Use the OrbitControls module here to control the camera
@@ -151,14 +153,14 @@ const skySphereMesh = new THREE.Mesh(skySphere, skySphereMaterial);
 scene.add(skySphereMesh);
 
 // LOAD GLTF MODELS ============================================================
-// Create a mixer for playing animations
-var mixer;
+// Create a mixer for each model to play an animation
+var laughMixer;
+
+// Create a variable for each model to trigger an animation
+var laugh;
 
 // Create variables to track the time passed since the most recent frame
 var deltaSeconds, lastFrame;
-
-// Create variables to trigger certain animations
-var laugh;
 
 // Load all GLTF models into the main scene
 loadGLTFModels();
