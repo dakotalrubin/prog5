@@ -21,6 +21,10 @@ function loadWindmillIsland() {
 
   // Load this model
   loader.load("./public/models/windmill_island.gltf", (gltf) => {
+    // Unique animations for this model
+    windmillMixer = new THREE.AnimationMixer(gltf.scene);
+    windmill = windmillMixer.clipAction(gltf.animations[0]);
+
     // Add this model into the scene
     scene.add(gltf.scene);
 
@@ -28,7 +32,7 @@ function loadWindmillIsland() {
     gltf.scene.position.x = 0;
     gltf.scene.position.y = 0;
     gltf.scene.position.z = 0;
-    gltf.scene.rotation.y = -30;
+    gltf.scene.rotation.y = 5;
   });
 }
 
@@ -48,10 +52,10 @@ function loadLaughingHead() {
     scene.add(gltf.scene);
 
     // Unique transformations for this model
-    gltf.scene.position.x = 0.5;
-    gltf.scene.position.y = 0;
-    gltf.scene.position.z = 4;
-    gltf.scene.rotation.y = -0.4;
+    gltf.scene.position.x = 0.7;
+    gltf.scene.position.y = 10;
+    gltf.scene.position.z = 74;
+    gltf.scene.rotation.y = -0.5;
   });
 }
 
@@ -67,16 +71,19 @@ function animate() {
   // Update time passed since last frame
   deltaSeconds = (Date.now() - lastFrame) / 1000;
 
-  // Make sure mixers exist then update animations every frame
+  // Update the animation for each mixer every frame
+  if (windmillMixer) {
+    windmillMixer.update(deltaSeconds);
+  }
   if (laughMixer) {
     laughMixer.update(deltaSeconds);
   }
 
-  // Draw the updated scene
-  renderer.render(scene, camera);
-
   // Incrementally rotate the sky sphere mesh along the y-axis
   skySphereMesh.rotation.y += 0.0001;
+
+  // Draw the updated scene
+  renderer.render(scene, camera);
 
   // Update the time of the most recent frame
   lastFrame = Date.now();
@@ -87,8 +94,12 @@ function animate() {
 
 // This function plays out the main scene
 function playScene() {
+  // Begin playing music
+  music.play();
+
   // Trigger all animations here when the main scene starts
   laugh.play();
+  windmill.play();
 
   // TODO: Use the OrbitControls module here to control the camera
 }
@@ -108,7 +119,8 @@ const camera = new THREE.PerspectiveCamera(
 );
 
 // Set the default camera position
-camera.position.z = 5;
+camera.position.y = 10;
+camera.position.z = 75;
 
 // Create a renderer instance and set the width and height as the browser size
 const renderer = new THREE.WebGLRenderer();
@@ -124,7 +136,7 @@ const loadingManager = HELPERS.showLoadingScreen();
 // LOADING ASSETS ==============================================================
 // =============================================================================
 
-// LOAD MUSIC ==================================================================
+// LOAD AUDIO ==================================================================
 // Create a new HTMLAudioElement to hold music
 const music = new Audio("./public/audio/feelgoodinc.mp3");
 
@@ -154,10 +166,10 @@ scene.add(skySphereMesh);
 
 // LOAD GLTF MODELS ============================================================
 // Create a mixer for each model to play animations
-var laughMixer;
+var windmillMixer, laughMixer;
 
 // Create a variable for each model to trigger animations
-var laugh;
+var windmill, laugh;
 
 // Create variables to track the time passed since the most recent frame
 var deltaSeconds, lastFrame;
@@ -185,6 +197,5 @@ document.getElementById("playButton").addEventListener("click", () => {
   document.getElementById("playButton").remove();
 
   // Play out the main scene
-  music.play();
   playScene();
 });

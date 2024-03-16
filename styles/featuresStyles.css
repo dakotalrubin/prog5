@@ -1,0 +1,28 @@
+/* Style the body of the page */
+body {
+  background-color: black;
+}
+
+/* Style the "features" page content */
+.features {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: 18px;
+  text-align: center;
+}
+
+/* Style anchor tag text */
+a {
+  color: white;
+}
+
+/* Style paragraph text */
+p {
+  max-width: 720px;
+  color: white;
+  font-size: 18px;
+  margin-top: 24px;
+}
