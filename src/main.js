@@ -100,10 +100,16 @@ function playScene() {
   laugh.play();
   windmill.play();
 
-  // Allow the camera to orbit around the windmill island and set defaults
+  // Allow the camera controls to orbit around the windmill island
   controls = new OrbitControls(camera, document.body);
-  controls.keyPanSpeed = 25;
+
+  // Set and update default camera controls
+  controls.target.set(0, 0, 0);
+  controls.keyPanSpeed = 20;
   controls.enableDamping = true;
+  controls.update();
+
+  // Allow the arrow keys to pan the camera
   controls.listenToKeyEvents(document.body);
 }
 
