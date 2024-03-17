@@ -15,12 +15,12 @@ import * as HELPERS from "./helpers.js";
 // =============================================================================
 
 // This function loads the windmill island model
-function loadWindmillIsland() {
+async function loadWindmillIsland() {
   // Instantiate a GLTFLoader for this model
   const loader = new GLTFLoader();
 
   // Load this model
-  loader.load("./public/models/windmill_island.gltf", (gltf) => {
+  await loader.load("./public/models/windmill_island.gltf", (gltf) => {
     // Unique animations for this model
     windmillMixer = new THREE.AnimationMixer(gltf.scene);
     windmill = windmillMixer.clipAction(gltf.animations[0]);
@@ -37,25 +37,26 @@ function loadWindmillIsland() {
 }
 
 // This function loads the laughing head model
-function loadLaughingHead() {
+async function loadLaughingHead() {
   // Instantiate a GLTFLoader for this model
   const loader = new GLTFLoader();
 
   // Load this model
-  loader.load("./public/models/AnimatedLaugh.gltf", (gltf) => {
+  await loader.load("./public/models/AnimatedLaugh.gltf", (gltf) => {
     // Unique animations for this model
     laughMixer = new THREE.AnimationMixer(gltf.scene);
     laugh = laughMixer.clipAction(gltf.animations[0]);
     laugh.setLoop(THREE.LoopOnce, 1);
+    laugh.timeScale = 1.24;
 
     // Add this model into the scene
     scene.add(gltf.scene);
 
     // Unique transformations for this model
     gltf.scene.position.x = 0.7;
-    gltf.scene.position.y = 10;
-    gltf.scene.position.z = 74;
-    gltf.scene.rotation.y = -0.5;
+    gltf.scene.position.y = 8;
+    gltf.scene.position.z = 67.2;
+    gltf.scene.rotation.y = -0.7;
   });
 }
 
@@ -72,11 +73,11 @@ function animate() {
   deltaSeconds = (Date.now() - lastFrame) / 1000;
 
   // Update the animation for each mixer every frame
-  if (windmillMixer) {
-    windmillMixer.update(deltaSeconds);
-  }
   if (laughMixer) {
     laughMixer.update(deltaSeconds);
+  }
+  if (windmillMixer) {
+    windmillMixer.update(deltaSeconds);
   }
 
   // Incrementally rotate the sky sphere mesh along the y-axis
@@ -119,8 +120,8 @@ const camera = new THREE.PerspectiveCamera(
 );
 
 // Set the default camera position
-camera.position.y = 10;
-camera.position.z = 75;
+camera.position.y = 8;
+camera.position.z = 68;
 
 // Create a renderer instance and set the width and height as the browser size
 const renderer = new THREE.WebGLRenderer();
@@ -143,6 +144,11 @@ const music = new Audio("./public/audio/feelgoodinc.mp3");
 // Adjust music settings
 music.volume = 0.6;
 music.loop = true;
+
+// LOAD LIGHTING ===============================================================
+// White directional light at the given intensity shining from above
+const directionalLight = new THREE.DirectionalLight(0xFFFFFF, 3);
+scene.add(directionalLight);
 
 // LOAD THE SKY SPHERE =========================================================
 // The parameters of SphereGeometry: radius, widthSegments and heightSegments
