@@ -4,8 +4,8 @@
 // and Dakota Rubin (Student ID: 1595408)
 // CSE 160 (Winter 2024)
 
-import * as THREE from 'three';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import * as THREE from "three";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
 import * as HELPERS from "./helpers.js";
@@ -53,18 +53,11 @@ async function loadLaughingHead() {
     scene.add(gltf.scene);
 
     // Unique transformations for this model
-    gltf.scene.position.x = 0.7;
-    gltf.scene.position.y = 8;
-    gltf.scene.position.z = 67.2;
-    gltf.scene.rotation.y = -0.7;
+    gltf.scene.position.x = 0.4;
+    gltf.scene.position.y = 7.85;
+    gltf.scene.position.z = 79;
+    gltf.scene.rotation.y = -0.5;
   });
-}
-
-// This function loads all GLTF models into the main scene
-function loadGLTFModels() {
-  // Call a new function to load each model here
-  loadWindmillIsland();
-  loadLaughingHead();
 }
 
 // This function redraws the main scene every time the screen refreshes
@@ -83,14 +76,19 @@ function animate() {
   // Incrementally rotate the sky sphere mesh along the y-axis
   skySphereMesh.rotation.y += 0.0001;
 
-  // Draw the updated scene
-  renderer.render(scene, camera);
-
   // Update the time of the most recent frame
   lastFrame = Date.now();
 
   // Retrieve the next frame to show after the screen refreshes
   requestAnimationFrame(animate);
+
+  // Required for certain OrbitControls settings
+  if (controls) {
+    controls.update();
+  }
+
+  // Draw the updated scene
+  renderer.render(scene, camera);
 }
 
 // This function plays out the main scene
@@ -102,7 +100,11 @@ function playScene() {
   laugh.play();
   windmill.play();
 
-  // TODO: Use the OrbitControls module here to control the camera
+  // Allow the camera to orbit around the windmill island and set defaults
+  controls = new OrbitControls(camera, document.body);
+  controls.keyPanSpeed = 25;
+  controls.enableDamping = true;
+  controls.listenToKeyEvents(document.body);
 }
 
 // =============================================================================
@@ -116,12 +118,12 @@ const scene = new THREE.Scene();
 // near and far boundaries (objects closer than 'near' or further than 'far'
 // won't be rendered)
 const camera = new THREE.PerspectiveCamera(
-  75, window.innerWidth / window.innerHeight, 0.1, 1000
+  45, window.innerWidth / window.innerHeight, 0.1, 1000
 );
 
-// Set the default camera position
-camera.position.y = 8;
-camera.position.z = 68;
+// Set the default camera position and viewing target
+camera.position.set(0, 8, 80);
+camera.lookAt(0, 0, 0);
 
 // Create a renderer instance and set the width and height as the browser size
 const renderer = new THREE.WebGLRenderer();
@@ -129,6 +131,9 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 
 // Add the renderer element to the HTML document
 document.body.appendChild(renderer.domElement);
+
+// Create a variable that will allow dynamic camera movement with OrbitControls
+var controls;
 
 // Show the loading screen while waiting for models to load
 const loadingManager = HELPERS.showLoadingScreen();
@@ -168,9 +173,10 @@ skySphereMaterial.side = THREE.BackSide;
 const skySphereMesh = new THREE.Mesh(skySphere, skySphereMaterial);
 
 // The sky sphere is placed at (0, 0, 0) by default
+skySphereMesh.rotation.y = 4;
 scene.add(skySphereMesh);
 
-// LOAD GLTF MODELS ============================================================
+// LOAD MODELS =================================================================
 // Create a mixer for each model to play animations
 var windmillMixer, laughMixer;
 
@@ -180,8 +186,9 @@ var windmill, laugh;
 // Create variables to track the time passed since the most recent frame
 var deltaSeconds, lastFrame;
 
-// Load all GLTF models into the main scene
-loadGLTFModels();
+// Load all models into the main scene
+loadWindmillIsland();
+loadLaughingHead();
 
 // LOAD THE MAIN SCENE =========================================================
 // Transition from the loading screen to the main scene after loading all assets
