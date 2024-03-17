@@ -47,7 +47,7 @@ async function loadLaughingHead() {
     laughMixer = new THREE.AnimationMixer(gltf.scene);
     laugh = laughMixer.clipAction(gltf.animations[0]);
     laugh.setLoop(THREE.LoopOnce, 1);
-    laugh.timeScale = 1.24;
+    laugh.timeScale = 1.1;
 
     // Add this model into the scene
     scene.add(gltf.scene);
@@ -143,7 +143,7 @@ const music = new Audio("./public/audio/feelgoodinc.mp3");
 
 // Adjust music settings
 music.volume = 0.6;
-music.loop = true;
+music.loop = false;
 
 // LOAD LIGHTING ===============================================================
 // White directional light at the given intensity shining from above
