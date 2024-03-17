@@ -14,6 +14,13 @@ import * as HELPERS from "./helpers.js";
 // HELPER FUNCTIONS ============================================================
 // =============================================================================
 
+
+// Introduce variables to control camera animation
+let startCameraPosition = new THREE.Vector3(0, 600, 0); // Initial position for the camera
+let targetCameraPosition = new THREE.Vector3(0, 600, -1.45); // Final position for the camera
+let animationDuration = 9; // Duration of the animation in seconds
+let animationStartTime; // Time when the animation started
+
 // This function loads the windmill island model
 async function loadWindmillIsland() {
   // Instantiate a GLTFLoader for this model
@@ -53,17 +60,29 @@ async function loadLaughingHead() {
     scene.add(gltf.scene);
 
     // Unique transformations for this model
-    gltf.scene.position.x = 0.4;
-    gltf.scene.position.y = 7.85;
-    gltf.scene.position.z = 79;
-    gltf.scene.rotation.y = -0.5;
+    gltf.scene.position.x = 0;
+    gltf.scene.position.y = 600;
+    gltf.scene.position.z = -1;
+    // gltf.scene.rotation.y = 0;
   });
 }
+
+// Introduce boolean flag for camera movement
+let moveCameraForward = true;
 
 // This function redraws the main scene every time the screen refreshes
 function animate() {
   // Update time passed since last frame
   deltaSeconds = (Date.now() - lastFrame) / 1000;
+  // Calculate elapsed time since the animation started
+  let elapsed = (Date.now() - animationStartTime) / 1000;
+
+  // Check if the animation duration has elapsed
+  if (elapsed >= animationDuration) {
+    // Animation complete, set the camera to the final position
+    camera.position.copy(targetCameraPosition);
+    return;
+  }
 
   // Update the animation for each mixer every frame
   if (laughMixer) {
@@ -72,6 +91,28 @@ function animate() {
   if (windmillMixer) {
     windmillMixer.update(deltaSeconds);
   }
+  // // Move the camera forward if the flag is active
+  // if (moveCameraForward) {
+  //   while (camera.position.z > -0.9) {
+  //   //   camera.translateZ(-0.1); // Adjust the amount of forward movement
+  //     camera.translateZ(-0.00001);
+  //   }
+  //   moveCameraForward = false;
+  // }
+  // Interpolate camera position based on elapsed time
+  let progress = elapsed / animationDuration;
+  let currentPosition = startCameraPosition.clone().lerp(targetCameraPosition, progress);
+
+  // Check if the current position is within the delta distance of the target position
+  let deltaDistanceSquared = currentPosition.distanceToSquared(targetCameraPosition);
+  if (deltaDistanceSquared <= 0.0001 * 0.0001) {
+    // Animation complete, set the camera to the final position
+    camera.position.copy(targetCameraPosition);
+    return;
+  }
+
+  // Set the camera position to the current position
+  camera.position.copy(currentPosition);
 
   // Incrementally rotate the sky sphere mesh along the y-axis
   skySphereMesh.rotation.y += 0.0001;
@@ -100,17 +141,20 @@ function playScene() {
   laugh.play();
   windmill.play();
 
-  // Allow the camera controls to orbit around the windmill island
-  controls = new OrbitControls(camera, document.body);
+  // Start the animation for the camera movement
+  animationStartTime = Date.now();
 
-  // Set and update default camera controls
-  controls.target.set(0, 0, 0);
-  controls.keyPanSpeed = 20;
-  controls.enableDamping = true;
-  controls.update();
+  // // Allow the camera controls to orbit around the windmill island
+  // controls = new OrbitControls(camera, document.body);
 
-  // Allow the arrow keys to pan the camera
-  controls.listenToKeyEvents(document.body);
+  // // Set and update default camera controls
+  // controls.target.set(0, 600, 0);
+  // controls.keyPanSpeed = 20;
+  // controls.enableDamping = true;
+  // controls.update();
+
+  // // Allow the arrow keys to pan the camera
+  // controls.listenToKeyEvents(document.body);
 }
 
 // =============================================================================
@@ -128,8 +172,8 @@ const camera = new THREE.PerspectiveCamera(
 );
 
 // Set the default camera position and viewing target
-camera.position.set(0, 8, 80);
-camera.lookAt(0, 0, 0);
+camera.position.set(0, 600, 0);
+// camera.lookAt(0, 0, 0);
 
 // Create a renderer instance and set the width and height as the browser size
 const renderer = new THREE.WebGLRenderer();
