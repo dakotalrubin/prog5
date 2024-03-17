@@ -47,7 +47,6 @@ async function loadLaughingHead() {
     laughMixer = new THREE.AnimationMixer(gltf.scene);
     laugh = laughMixer.clipAction(gltf.animations[0]);
     laugh.setLoop(THREE.LoopOnce, 1);
-    laugh.timeScale = 1.1;
 
     // Add this model into the scene
     scene.add(gltf.scene);
