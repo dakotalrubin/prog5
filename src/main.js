@@ -11,15 +11,27 @@ import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import * as HELPERS from "./helpers.js";
 
 // =============================================================================
-// HELPER FUNCTIONS ============================================================
+// GLOBAL VARIABLES ============================================================
 // =============================================================================
 
+// Create variables to control first camera animation
+let startCameraPosition = new THREE.Vector3(0, 0, 20001); // Initial camera position
+let targetCameraPosition = new THREE.Vector3(0, 0, 19999.55); // Final camera position
+let animationDuration = 7; // Duration of first animation in seconds
+let animationStartTime; // Time to begin the first animation
 
-// Introduce variables to control camera animation
-let startCameraPosition = new THREE.Vector3(0, 600, 0); // Initial position for the camera
-let targetCameraPosition = new THREE.Vector3(0, 600, -1.45); // Final position for the camera
-let animationDuration = 9; // Duration of the animation in seconds
-let animationStartTime; // Time when the animation started
+// Create variables to control second camera animation
+let startCameraPosition2 = new THREE.Vector3(0, 0, 19999.55); // Initial camera position
+let targetCameraPosition2 = new THREE.Vector3(0, 8, 80); // Final camera position
+let animationDuration2 = 6; // Duration of second animation in seconds
+let animationStartTime2; // Time to begin the second animation
+let getAnimationStartTime2 = true; // Initialize second animation start time
+
+let setUpControlsFlag = true; // Initialize OrbitControls
+
+// =============================================================================
+// HELPER FUNCTIONS ============================================================
+// =============================================================================
 
 // This function loads the windmill island model
 async function loadWindmillIsland() {
@@ -54,34 +66,76 @@ async function loadLaughingHead() {
     laughMixer = new THREE.AnimationMixer(gltf.scene);
     laugh = laughMixer.clipAction(gltf.animations[0]);
     laugh.setLoop(THREE.LoopOnce, 1);
-    laugh.timeScale = 1; // Change this to adjust the animation playback speed
+    laugh.timeScale = 1;
 
     // Add this model into the scene
     scene.add(gltf.scene);
 
     // Unique transformations for this model
     gltf.scene.position.x = 0;
-    gltf.scene.position.y = 600;
-    gltf.scene.position.z = -1;
-    // gltf.scene.rotation.y = 0;
+    gltf.scene.position.y = 0;
+    gltf.scene.position.z = 20000;
   });
 }
 
-// Introduce boolean flag for camera movement
-let moveCameraForward = true;
+// This function sets up some default OrbitControls settings
+function setUpControls() {
+  // Allow the camera controls to orbit around the windmill island
+  controls = new OrbitControls(camera, document.body);
+
+  // Set and update default camera controls
+  camera.position.set(0, 8, 80);
+  controls.target.set(0, 0, 0);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.24;
+  controls.update();
+
+  // Allow the arrow keys to pan the camera
+  controls.listenToKeyEvents(document.body);
+}
 
 // This function redraws the main scene every time the screen refreshes
 function animate() {
   // Update time passed since last frame
   deltaSeconds = (Date.now() - lastFrame) / 1000;
-  // Calculate elapsed time since the animation started
+
+  // Calculate elapsed time since the first animation started
   let elapsed = (Date.now() - animationStartTime) / 1000;
 
-  // Check if the animation duration has elapsed
+  // Check if the first animation is finished
   if (elapsed >= animationDuration) {
-    // Animation complete, set the camera to the final position
-    camera.position.copy(targetCameraPosition);
-    return;
+    // Retrieve the start time for the second animation
+    if (getAnimationStartTime2) {
+      animationStartTime2 = Date.now();
+      getAnimationStartTime2 = false;
+    }
+
+    // Calculate elapsed time since the second animation started
+    let elapsed2 = (Date.now() - animationStartTime2) / 1000;
+
+    // Check if the second animation duration is finished
+    if (elapsed2 >= animationDuration2) {
+      // Second animation complete, set up OrbitControls
+      if (setUpControlsFlag) {
+        setUpControls();
+        setUpControlsFlag = false;
+      }
+    } else {
+      // Interpolate camera position based on elapsed time
+      let progress = elapsed2 / animationDuration2;
+      let currentPosition = startCameraPosition2.clone().lerp(targetCameraPosition2, progress);
+
+      // Set the camera position to the current position and focus on the origin
+      camera.position.copy(currentPosition);
+      camera.lookAt(0, 0, 0);
+    }
+  } else { // Play out the first animation
+    // Interpolate camera position based on elapsed time
+    let progress = elapsed / animationDuration;
+    let currentPosition = startCameraPosition.clone().lerp(targetCameraPosition, progress);
+
+    // Set the camera position to the current position
+    camera.position.copy(currentPosition);
   }
 
   // Update the animation for each mixer every frame
@@ -91,28 +145,6 @@ function animate() {
   if (windmillMixer) {
     windmillMixer.update(deltaSeconds);
   }
-  // // Move the camera forward if the flag is active
-  // if (moveCameraForward) {
-  //   while (camera.position.z > -0.9) {
-  //   //   camera.translateZ(-0.1); // Adjust the amount of forward movement
-  //     camera.translateZ(-0.00001);
-  //   }
-  //   moveCameraForward = false;
-  // }
-  // Interpolate camera position based on elapsed time
-  let progress = elapsed / animationDuration;
-  let currentPosition = startCameraPosition.clone().lerp(targetCameraPosition, progress);
-
-  // Check if the current position is within the delta distance of the target position
-  let deltaDistanceSquared = currentPosition.distanceToSquared(targetCameraPosition);
-  if (deltaDistanceSquared <= 0.0001 * 0.0001) {
-    // Animation complete, set the camera to the final position
-    camera.position.copy(targetCameraPosition);
-    return;
-  }
-
-  // Set the camera position to the current position
-  camera.position.copy(currentPosition);
 
   // Incrementally rotate the sky sphere mesh along the y-axis
   skySphereMesh.rotation.y += 0.0001;
@@ -141,20 +173,8 @@ function playScene() {
   laugh.play();
   windmill.play();
 
-  // Start the animation for the camera movement
+  // Start the animation for the first camera movement
   animationStartTime = Date.now();
-
-  // // Allow the camera controls to orbit around the windmill island
-  // controls = new OrbitControls(camera, document.body);
-
-  // // Set and update default camera controls
-  // controls.target.set(0, 600, 0);
-  // controls.keyPanSpeed = 20;
-  // controls.enableDamping = true;
-  // controls.update();
-
-  // // Allow the arrow keys to pan the camera
-  // controls.listenToKeyEvents(document.body);
 }
 
 // =============================================================================
@@ -168,12 +188,8 @@ const scene = new THREE.Scene();
 // near and far boundaries (objects closer than 'near' or further than 'far'
 // won't be rendered)
 const camera = new THREE.PerspectiveCamera(
-  45, window.innerWidth / window.innerHeight, 0.1, 1000
+  45, window.innerWidth / window.innerHeight, 0.001, 22000
 );
-
-// Set the default camera position and viewing target
-camera.position.set(0, 600, 0);
-// camera.lookAt(0, 0, 0);
 
 // Create a renderer instance and set the width and height as the browser size
 const renderer = new THREE.WebGLRenderer();
