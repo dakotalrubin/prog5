@@ -1,6 +1,6 @@
 # prog5: Feel Good JS  
   
-![alt text](https://github.com/dakotalrubin/prog5/blob/main/thumbnail.png?raw=true)
+![alt text](https://github.com/dakotalrubin/prog5/blob/main/thumbnail.jpg?raw=true)
   
 ## Description  
 Our project was inspired by the music video for the Gorillaz song called "Feel Good Inc", which features a windmill on a floating island in the sky. For this project, we focused on concepts like animation, modeling, camera movement and audio.  
